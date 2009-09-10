@@ -67,7 +67,8 @@ extern void *vpe_get_shared(int index);
 static irqreturn_t rtlx_interrupt(int irq, void *dev_id)
 {
 	int i;
-	unsigned int flags, vpeflags;
+	unsigned int vpeflags;
+	unsigned long flags;
 
 	/* Ought not to be strictly necessary for SMTC builds */
 	local_irq_save(flags);
