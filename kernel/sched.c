@@ -7311,7 +7311,7 @@ cpu_to_core_group(int cpu, const struct cpumask *cpu_map,
 {
 	int group;
 
-	cpumask_and(mask, &per_cpu(cpu_sibling_map, cpu), cpu_map);
+	cpumask_and(mask, &cpu_sibling_map[cpu], cpu_map);
 	group = cpumask_first(mask);
 	if (sg)
 		*sg = &per_cpu(sched_group_core, group).sg;
@@ -7340,7 +7340,7 @@ cpu_to_phys_group(int cpu, const struct cpumask *cpu_map,
 	cpumask_and(mask, cpu_coregroup_mask(cpu), cpu_map);
 	group = cpumask_first(mask);
 #elif defined(CONFIG_SCHED_SMT)
-	cpumask_and(mask, &per_cpu(cpu_sibling_map, cpu), cpu_map);
+	cpumask_and(mask, &cpu_sibling_map[cpu], cpu_map);
 	group = cpumask_first(mask);
 #else
 	group = cpu;
@@ -7683,7 +7683,7 @@ static int __build_sched_domains(const struct cpumask *cpu_map,
 		SD_INIT(sd, SIBLING);
 		set_domain_attribute(sd, attr);
 		cpumask_and(sched_domain_span(sd),
-			    &per_cpu(cpu_sibling_map, i), cpu_map);
+			    &cpu_sibling_map[i], cpu_map);
 		sd->parent = p;
 		p->child = sd;
 		cpu_to_cpu_group(i, cpu_map, &sd->groups, tmpmask);
@@ -7694,7 +7694,7 @@ static int __build_sched_domains(const struct cpumask *cpu_map,
 	/* Set up CPU (sibling) groups */
 	for_each_cpu(i, cpu_map) {
 		cpumask_and(this_sibling_map,
-			    &per_cpu(cpu_sibling_map, i), cpu_map);
+			    &cpu_sibling_map[i], cpu_map);
 		if (i != cpumask_first(this_sibling_map))
 			continue;
 
