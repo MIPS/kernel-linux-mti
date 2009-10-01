@@ -190,6 +190,7 @@ NESTED(kernel_entry, 16, sp)			# kernel entry point
 	PTR_LA		$28, init_thread_union
 	PTR_LI		sp, _THREAD_SIZE - 32
 	PTR_ADDU	sp, $28
+	back_to_back_c0_hazard
 	set_saved_sp	sp, t0, t1
 	PTR_SUBU	sp, 4 * SZREG		# init stack pointer
 
