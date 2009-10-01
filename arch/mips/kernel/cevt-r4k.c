@@ -102,18 +102,17 @@ static int c0_compare_int_pending(void)
 /*
  * Compare interrupt can be routed and latched outside the core,
  * so a single execution hazard barrier may not be enough to give
- * it time to clear as seen in the Cause register.  4 time the
- * pipeline depth seems reasonably conservative, and empirically
- * works better in configurations with high CPU/bus clock ratios.
+ * it time to clear as seen in the Cause register. The number of
+ * hazard barriers is dependent on the CPU/bus ratio.
  */
 
-#define compare_change_hazard() \
-	do { \
-		irq_disable_hazard(); \
-		irq_disable_hazard(); \
-		irq_disable_hazard(); \
-		irq_disable_hazard(); \
-	} while (0)
+#define	CHANGEHAZARD 20
+static inline void compare_change_hazard(void)
+{
+	int n = CHANGEHAZARD;
+	while (n--)
+		irq_disable_hazard();
+}
 
 int c0_compare_int_usable(void)
 {
