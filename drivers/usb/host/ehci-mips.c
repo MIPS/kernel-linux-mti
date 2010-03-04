@@ -106,6 +106,14 @@ static int ehci_hcd_mips_drv_probe(struct platform_device *pdev)
 	/* cache this readonly data; minimize chip reads */
 	ehci->hcs_params = readl(&ehci->caps->hcs_params);
 
+#if defined(CONFIG_MIPS)
+#if defined(CONFIG_CPU_BIG_ENDIAN)
+       ehci_big_endian_desc(ehci) = 1;
+#endif
+#if defined(CONFIG_CPU_LITTLE_ENDIAN)
+       ehci_big_endian_desc(ehci) = 0;
+#endif
+#endif
 	/* Set burst length to 16 words */
 	/* FIXME: should be tunable */
 	ehci_writel(ehci, 0x1010, &ehci->regs->reserved[1]);

@@ -78,7 +78,7 @@ config USB_EHCI_BIG_ENDIAN_MMIO
 
 config USB_EHCI_BIG_ENDIAN_DESC
 	bool
-	depends on USB_EHCI_HCD && (440EPX || ARCH_IXP4XX)
+	depends on USB_EHCI_HCD && (440EPX || ARCH_IXP4XX || MIPS)
 	default y
 
 config USB_EHCI_FSL
