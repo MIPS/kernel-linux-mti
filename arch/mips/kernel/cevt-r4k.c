@@ -13,6 +13,7 @@
 #include <asm/smtc_ipi.h>
 #include <asm/time.h>
 #include <asm/cevt-r4k.h>
+#include <asm/gic.h>
 
 /*
  * The SMTC Kernel for the 34K, 1004K, et. al. replaces several
@@ -96,6 +97,10 @@ void mips_event_handler(struct clock_event_device *dev)
  */
 static int c0_compare_int_pending(void)
 {
+#ifdef CONFIG_MIPS_SEAD3
+	if (cpu_has_veic)
+		return gic_get_timer_pending();
+#endif
 	return (read_c0_cause() >> cp0_compare_irq) & 0x100;
 }
 

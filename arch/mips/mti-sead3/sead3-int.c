@@ -35,6 +35,7 @@
 #include <asm/irq_cpu.h>
 #include <asm/irq_regs.h>
 #include <asm/mips-boards/generic.h>
+#include <asm/mips-boards/sead3int.h>
 #include <asm/gic.h>
 
 #define SEAD_CONFIG_GIC_PRESENT_SHF   (1)
@@ -44,6 +45,31 @@
 
 int gic_present;    /* global var => auto initialized to 0 */
 static unsigned long sead3_config_reg;
+
+/*
+ * This table defines the setup for each external GIC interrupt
+ * It is indexed by interrupt number
+ */
+#define GIC_CPU_NMI GIC_MAP_TO_NMI_MSK
+static struct gic_intr_map gic_intr_map[GIC_NUM_INTRS] = {
+	{ 0, GIC_CPU_INT4, GIC_POL_POS, GIC_TRIG_LEVEL, GIC_FLAG_TRANSPARENT },
+	{ 0, GIC_CPU_INT3, GIC_POL_POS, GIC_TRIG_LEVEL, GIC_FLAG_TRANSPARENT },
+	{ 0, GIC_CPU_INT2, GIC_POL_POS, GIC_TRIG_LEVEL, GIC_FLAG_TRANSPARENT },
+	{ 0, GIC_CPU_INT2, GIC_POL_POS, GIC_TRIG_LEVEL, GIC_FLAG_TRANSPARENT },
+	{ 0, GIC_CPU_INT1, GIC_POL_POS, GIC_TRIG_LEVEL, GIC_FLAG_TRANSPARENT },
+	{ 0, GIC_CPU_INT0, GIC_POL_POS, GIC_TRIG_LEVEL, GIC_FLAG_TRANSPARENT },
+	{ 0, GIC_CPU_INT0, GIC_POL_POS, GIC_TRIG_LEVEL, GIC_FLAG_TRANSPARENT },
+	{ 0, GIC_CPU_INT0, GIC_POL_POS, GIC_TRIG_LEVEL, GIC_FLAG_TRANSPARENT },
+	{ 0, GIC_CPU_INT0, GIC_POL_POS, GIC_TRIG_LEVEL, GIC_FLAG_TRANSPARENT },
+	{ X, X,            X,           X,              0 },
+	{ X, X,            X,           X,              0 },
+	{ X, X,            X,           X,              0 },
+	{ X, X,            X,           X,              0 },
+	{ X, X,            X,           X,              0 },
+	{ X, X,            X,           X,              0 },
+	{ X, X,            X,           X,              0 },
+	/* The remainder of this table is initialised by fill_ipi_map */
+};
 
 /*
  * Version of ffs that only looks at bits 8..15
@@ -101,5 +127,10 @@ void __init arch_init_irq(void)
 			SEAD_CONFIG_GIC_PRESENT_SHF;
 	printk("GIC: %spresent\n", (gic_present) ? "" : "not ");
 	printk("EIC: %s\n", (current_cpu_data.options & MIPS_CPU_VEIC) ? "on" : "off");
+
+	if (gic_present) {
+		gic_init(GIC_BASE_ADDR, GIC_ADDRSPACE_SZ, gic_intr_map,
+				ARRAY_SIZE(gic_intr_map), MIPS_GIC_IRQ_BASE);
+	}
 }
 
