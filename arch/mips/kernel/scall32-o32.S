@@ -154,9 +154,16 @@ stackargs:
 	jr	t1
 	 sw	t5, 16(sp)		# argument #5 to ksp
 
+#ifdef CONFIG_CPU_MICROMIPS
+	## FIXME:
+	sw	t8, 28(sp); nop		# argument #8 to ksp
+	sw	t7, 24(sp); nop		# argument #7 to ksp
+	sw	t6, 20(sp); nop		# argument #6 to ksp
+#else
 	sw	t8, 28(sp)		# argument #8 to ksp
 	sw	t7, 24(sp)		# argument #7 to ksp
 	sw	t6, 20(sp)		# argument #6 to ksp
+#endif
 6:	j	stack_done		# go back
 	 nop
 	.set	pop
