@@ -525,15 +525,35 @@ NESTED(nmi_handler, PT_SIZE, sp)
 	.set	push
 	.set	noat
 	.set	noreorder
-	/* 0x7c03e83b: rdhwr v1,$29 */
+	/* MIPS32: 0x7c03e83b: rdhwr v1,$29 */
+	/* uMIPS:  0x007d6b3c: rdhwr v1,$29 */
 	MFC0	k1, CP0_EPC
-	andi    k0, k1, 1
-	bnez    k0, handle_ri
+#ifdef CONFIG_CPU_HAS_MICROMIPS
+	and	k0, k1, 1
+	beqz	k0, 1f
+	xor	k1, k0
+	lhu	k0, (k1)
+	lhu	k1, 2(k1)
+	ins	k1, k0, 16, 16
+	lui	k0, 0x007d
+	b	docheck
+	ori	k0, 0x6b3c
+1:
 	lui	k0, 0x7c03
 	lw	k1, (k1)
 	ori	k0, 0xe83b
+#else
+	andi	k0, k1, 1
+	bnez	k0, handle_ri
+	lui	k0, 0x7c03
+	lw	k1, (k1)
+	ori	k0, 0xe83b
+#endif
 	.set	reorder
+docheck:
 	bne	k0, k1, handle_ri	/* if not ours */
+
+isrdhwr:
 	/* The insn is rdhwr.  No need to check CAUSE.BD here. */
 	get_saved_sp	/* k1 := current_thread_info */
 	.set	noreorder
