@@ -215,6 +215,7 @@ config MIPS_MALTA
 	select SYS_SUPPORTS_MIPS_CMP
 	select SYS_SUPPORTS_MULTITHREADING
 	select SYS_SUPPORTS_SMARTMIPS
+	select SYS_SUPPORTS_MICROMIPS
 	help
 	  This enables support for the MIPS Technologies Malta evaluation
 	  board.
@@ -1682,6 +1683,20 @@ config CPU_HAS_SMARTMIPS
 	  you don't know you probably don't have SmartMIPS and should say N
 	  here.
 
+config CPU_HAS_MICROMIPS
+	depends on SYS_SUPPORTS_MICROMIPS
+	bool "Support for the MicroMIPS ISA"
+	help
+	  Enabling this option adds kernel support for running userland programs
+ 	  that use the MIcroMIPS ISA.
+
+config CPU_MICROMIPS
+	depends on SYS_SUPPORTS_MICROMIPS
+	bool "Build kernel using MicroMIPS ISA"
+	help
+	  When this option is enabled the kernel will be built using the
+	  MicroMIPS ISA
+
 config CPU_HAS_WB
 	bool
 
@@ -1756,6 +1771,9 @@ config SYS_SUPPORTS_HIGHMEM
 	bool
 
 config SYS_SUPPORTS_SMARTMIPS
+	bool
+
+config SYS_SUPPORTS_MICROMIPS
 	bool
 
 config ARCH_FLATMEM_ENABLE
