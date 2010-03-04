@@ -119,8 +119,17 @@ asmlinkage void plat_irq_dispatch(void)
 
 void __init arch_init_irq(void)
 {
-	if (!cpu_has_veic)
+	int i;
+
+	if (!cpu_has_veic) {
 		mips_cpu_irq_init();
+
+		if (cpu_has_vint) {
+			/* install generic handler */
+			for (i = 0; i < 8; i++)
+				set_vi_handler(i, plat_irq_dispatch);
+		}
+	}
 
 	sead3_config_reg = (unsigned long)ioremap_nocache(SEAD_CONFIG_BASE, SEAD_CONFIG_SIZE);
 	gic_present = (REG32(sead3_config_reg) & SEAD_CONFIG_GIC_PRESENT_MSK) >>
