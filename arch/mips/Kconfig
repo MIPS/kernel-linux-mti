@@ -243,6 +243,7 @@ config MIPS_SEAD3
 	select SYS_SUPPORTS_MIPS_CMP if BROKEN	# because SYNC_R4K is broken
 	select SYS_SUPPORTS_MULTITHREADING
 	select SYS_SUPPORTS_SMARTMIPS
+	select SYS_SUPPORTS_MICROMIPS
 	help
 	  This enables support for the MIPS Technologies SEAD3 evaluation
 	  board.
