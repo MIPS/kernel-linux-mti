@@ -1004,6 +1004,7 @@ static void __cpuinit probe_pcache(void)
 
 	case CPU_74K:
 		c->dcache.flags |= MIPS_CACHE_VTAG;
+	case CPU_14K:
 	case CPU_24K:
 	case CPU_34K:
 	case CPU_1004K:
@@ -1047,9 +1048,9 @@ static void __cpuinit probe_pcache(void)
 #endif
 
 	printk("Primary instruction cache %ldkB, %s, %s, linesize %d bytes.\n",
-	       icache_size >> 10,
+	       icache_size >> 10, way_string[c->icache.ways],
 	       c->icache.flags & MIPS_CACHE_VTAG ? "VIVT" : "VIPT",
-	       way_string[c->icache.ways], c->icache.linesz);
+	       c->icache.linesz);
 
 	printk("Primary data cache %ldkB, %s, %s, %s, linesize %d bytes\n",
 	       dcache_size >> 10, way_string[c->dcache.ways],

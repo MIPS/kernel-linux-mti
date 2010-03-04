@@ -166,6 +166,7 @@ void __init check_wait(void)
 		cpu_wait = rm7k_wait_irqoff;
 		break;
 
+	case CPU_14K:
 	case CPU_24K:
 	case CPU_34K:
 	case CPU_1004K:
@@ -761,6 +762,10 @@ static inline void cpu_probe_mips(struct cpuinfo_mips *c, unsigned int cpu)
 	case PRID_IMP_74K:
 		c->cputype = CPU_74K;
 		__cpu_name[cpu] = "MIPS 74Kc";
+		break;
+	case PRID_IMP_14K:
+		c->cputype = CPU_14K;
+		__cpu_name[cpu] = "MIPS 14Kc";
 		break;
 	case PRID_IMP_1004K:
 		c->cputype = CPU_1004K;

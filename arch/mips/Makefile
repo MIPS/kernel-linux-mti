@@ -42,6 +42,7 @@ tool-archpref		= $(64bit-tool-archpref)
 UTS_MACHINE		:= mips64
 endif
 
+$(warning, "In MIPS Makefile")
 ifneq ($(SUBARCH),$(ARCH))
   ifeq ($(CROSS_COMPILE),)
     CROSS_COMPILE := $(call cc-cross-prefix, $(tool-archpref)-linux-  $(tool-archpref)-linux-gnu-  $(tool-archpref)-unknown-linux-gnu-)
@@ -317,6 +318,14 @@ core-$(CONFIG_MIPS_MALTA)	+= arch/mips/mti-malta/
 cflags-$(CONFIG_MIPS_MALTA)	+= -I$(srctree)/arch/mips/include/asm/mach-malta
 load-$(CONFIG_MIPS_MALTA)	+= 0xffffffff80100000
 all-$(CONFIG_MIPS_MALTA)	:= vmlinux.bin
+
+#
+# MIPS Malta board
+#
+core-$(CONFIG_MIPS_SEAD3)	+= arch/mips/mti-sead3/
+cflags-$(CONFIG_MIPS_SEAD3)	+= -Iinclude/asm-mips/mach-sead3
+load-$(CONFIG_MIPS_SEAD3)	+= 0xffffffff80100000
+all-$(CONFIG_MIPS_SEAD3)	:= vmlinux.srec
 
 #
 # MIPS SIM

@@ -219,6 +219,34 @@ config MIPS_MALTA
 	  This enables support for the MIPS Technologies Malta evaluation
 	  board.
 
+config MIPS_SEAD3
+	bool "MIPS SEAD3 board"
+	select BOOT_ELF32
+	select BOOT_RAW
+	select CEVT_R4K
+	select CSRC_R4K
+	select DMA_NONCOHERENT
+	select IRQ_CPU
+	select IRQ_GIC
+	select MIPS_BOARDS_GEN
+	select MIPS_CPU_SCACHE
+	select MIPS_MSC
+	select SWAP_IO_SPACE
+	select SYS_HAS_CPU_MIPS32_R1
+	select SYS_HAS_CPU_MIPS32_R2
+	select SYS_HAS_CPU_MIPS64_R1
+	select SYS_HAS_EARLY_PRINTK
+	select SYS_SUPPORTS_32BIT_KERNEL
+	select SYS_SUPPORTS_64BIT_KERNEL
+	select SYS_SUPPORTS_BIG_ENDIAN
+	select SYS_SUPPORTS_LITTLE_ENDIAN
+	select SYS_SUPPORTS_MIPS_CMP if BROKEN	# because SYNC_R4K is broken
+	select SYS_SUPPORTS_MULTITHREADING
+	select SYS_SUPPORTS_SMARTMIPS
+	help
+	  This enables support for the MIPS Technologies SEAD3 evaluation
+	  board.
+
 config MIPS_SIM
 	bool 'MIPS simulator (MIPSsim)'
 	select CEVT_R4K
@@ -1047,7 +1075,7 @@ config CPU_MIPS32_R2
 	bool "MIPS32 Release 2"
 	depends on SYS_HAS_CPU_MIPS32_R2
 	select CPU_HAS_LLSC
-	select CPU_HAS_PREFETCH
+	#select CPU_HAS_PREFETCH
 	select CPU_SUPPORTS_32BIT_KERNEL
 	select CPU_SUPPORTS_HIGHMEM
 	help

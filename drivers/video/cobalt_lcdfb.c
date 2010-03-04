@@ -34,7 +34,6 @@
  * 1|0x40|0x41|0x42|...|0x4e|0x4f|
  *  +----+----+----+---+----+----+
  */
-#define LCD_DATA_REG_OFFSET	0x10
 #define LCD_XRES_MAX		16
 #define LCD_YRES_MAX		2
 #define LCD_CHARS_MAX		32
@@ -61,6 +60,53 @@
 #define LCD_CUR_POS(x)		((x) & LCD_CUR_POS_MASK)
 #define LCD_TEXT_POS(x)		((x) | LCD_TEXT_MODE)
 
+
+#ifdef CONFIG_MIPS_SEAD3
+
+#define LCD_CTL			0x00
+#define LCD_DATA		0x08
+#define CPLD_STATUS		0x10
+#define CPLD_DATA		0x18
+
+static inline void cpld_wait(struct fb_info *info)
+{
+	do {
+	} while (readl(info->screen_base + CPLD_STATUS) & 1);
+}
+
+static inline void lcd_write_control(struct fb_info *info, u8 control)
+{
+	cpld_wait(info);
+	writel(control, info->screen_base + LCD_CTL);
+}
+
+static inline u8 lcd_read_control(struct fb_info *info)
+{
+	cpld_wait(info);
+	readl(info->screen_base + LCD_CTL);
+	cpld_wait(info);
+	return readl(info->screen_base + CPLD_DATA) & 0xff;
+}
+
+static inline void lcd_write_data(struct fb_info *info, u8 data)
+{
+	cpld_wait(info);
+	writel(data, info->screen_base + LCD_DATA);
+}
+
+static inline u8 lcd_read_data(struct fb_info *info)
+{
+	cpld_wait(info);
+	readl(info->screen_base + LCD_DATA);
+	cpld_wait(info);
+	return readl(info->screen_base + CPLD_DATA) & 0xff;
+}
+#endif
+
+#ifdef CONFIG_MIPS_COBALT
+
+#define LCD_DATA_REG_OFFSET	0x10
+
 static inline void lcd_write_control(struct fb_info *info, u8 control)
 {
 	writel((u32)control << 24, info->screen_base);
@@ -80,6 +126,7 @@ static inline u8 lcd_read_data(struct fb_info *info)
 {
 	return readl(info->screen_base + LCD_DATA_REG_OFFSET) >> 24;
 }
+#endif
 
 static int lcd_busy_wait(struct fb_info *info)
 {
