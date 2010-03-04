@@ -26,7 +26,6 @@
 #include <linux/interrupt.h>
 #include <linux/time.h>
 #include <linux/timex.h>
-#include <linux/mc146818rtc.h>
 
 #include <asm/mipsregs.h>
 #include <asm/mipsmtregs.h>
@@ -36,7 +35,6 @@
 #include <asm/div64.h>
 #include <asm/cpu.h>
 #include <asm/time.h>
-#include <asm/mc146818-time.h>
 #include <asm/msc01_ic.h>
 
 #include <asm/mips-boards/generic.h>
@@ -58,14 +56,53 @@ static void mips_perf_dispatch(void)
 	do_IRQ(mips_cpu_perf_irq);
 }
 
+static void __iomem *status_reg   = (void __iomem *)0xbf000410;
+
 /*
  * Estimate CPU frequency.  Sets mips_hpt_frequency as a side-effect
  */
 static unsigned int __init estimate_cpu_frequency(void)
 {
-	int freq = 83000000;	/* FIXME */
-	mips_hpt_frequency = freq / 2;
-	return freq;
+	unsigned int prid = read_c0_prid() & 0xffff00;
+	unsigned int tick = 0;
+	unsigned int freq;
+	unsigned int orig;
+	unsigned long flags;
+
+	local_irq_save(flags);
+
+	orig = readl(status_reg) & 0x2;               /* get original sample */
+	/* wait for transition */
+	while ((readl(status_reg) & 0x2) == orig)
+		;
+	orig = orig ^ 0x2;                            /* flip the bit */
+
+	write_c0_count(0);
+
+	/* wait 1 second (the sampling clock transitions every 10ms) */
+	while (tick < 100) {
+		/* wait for transition */
+		while ((readl(status_reg) & 0x2) == orig)
+			;
+		orig = orig ^ 0x2;                            /* flip the bit */
+		tick++;
+	}
+
+	freq = read_c0_count();
+
+	local_irq_restore(flags);
+
+	mips_hpt_frequency = freq;
+
+	/* Adjust for processor */
+	if ((prid != (PRID_COMP_MIPS | PRID_IMP_20KC)) &&
+		(prid != (PRID_COMP_MIPS | PRID_IMP_25KF)))
+		freq *= 2;
+
+	freq += 5000;        /* rounding */
+	freq -= freq%10000;
+
+	return freq ;
 }
 
 unsigned long read_persistent_clock(void)
