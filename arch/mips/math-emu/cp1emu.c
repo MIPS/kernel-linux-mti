@@ -288,7 +288,7 @@ static int micro_mips32_to_mips32(union mips_instruction *insn_ptr)
 					op = 0;
 				else
 					op = 1;
-				mips32_insn.r_format.opcode = cop1_op;
+				mips32_insn.r_format.opcode = spec_op;
 				mips32_insn.r_format.rs = insn.mm_fp4_format.fs;
 				mips32_insn.r_format.rt = (insn.mm_fp4_format.cc<<2) + op;
 				mips32_insn.r_format.rd = insn.mm_fp4_format.rt;
