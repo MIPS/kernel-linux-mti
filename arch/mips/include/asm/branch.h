@@ -20,6 +20,7 @@ static inline unsigned long exception_epc(struct pt_regs *regs)
 	if (!delay_slot(regs))
 		return regs->cp0_epc;
 
+	BUG_ON(regs->cp0_epc & 1);
 	return regs->cp0_epc + 4;
 }
 
@@ -27,6 +28,7 @@ extern int __compute_return_epc(struct pt_regs *regs);
 
 static inline int compute_return_epc(struct pt_regs *regs)
 {
+	BUG_ON(regs->cp0_epc & 1);
 	if (!delay_slot(regs)) {
 		regs->cp0_epc += 4;
 		return 0;

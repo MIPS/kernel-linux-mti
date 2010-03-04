@@ -282,6 +282,9 @@ static int get_frame_info(struct mips_frame_info *info)
 	info->pc_offset = -1;
 	info->frame_size = 0;
 
+	if ((unsigned long)ip & 1)
+		goto err;
+
 	if (!ip)
 		goto err;
 
