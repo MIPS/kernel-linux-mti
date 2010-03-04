@@ -84,6 +84,7 @@
 #include <asm/inst.h>
 #include <asm/uaccess.h>
 #include <asm/system.h>
+#include <asm/fpu_emulator.h>
 
 #define STR(x)  __STR(x)
 #define __STR(x)  #x
@@ -542,12 +543,27 @@ asmlinkage void do_ade(struct pt_regs *regs)
 	return;
 
 sigbus:
+#ifdef CONFIG_CPU_MICROMIPS
+	/* we don't fix unaligned accesses in micro mips mode => don't die and just do SIGBUS */
+	if ((regs->cp0_epc & 0x1) == 0)
+		die_if_kernel("Kernel unaligned instruction access", regs);
+	force_sig(SIGBUS, current);
+
+	/* advance the epc */
+	if (regs->cp0_epc & 0x1) {
+		if (mm_is16bit(*(u16 *)(regs->cp0_epc & ~1)))
+			regs->cp0_epc += 2;
+		else
+			regs->cp0_epc += 4;
+	}
+#else
 	die_if_kernel("Kernel unaligned instruction access", regs);
 	force_sig(SIGBUS, current);
 
 	/*
 	 * XXX On return from the signal handler we should advance the epc
 	 */
+#endif
 }
 
 #ifdef CONFIG_DEBUG_FS
