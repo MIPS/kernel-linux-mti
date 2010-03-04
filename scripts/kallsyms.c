@@ -106,7 +106,7 @@ static int read_symbol(FILE *in, struct sym_entry *s)
 		 is_arm_mapping_symbol(sym))
 		return -1;
 	/* exclude also MIPS ELF local symbols ($L123 instead of .L123) */
-	else if (str[0] == '$')
+	else if (str[1] == 'L' && (str[0] == '$' || str[0] == '.'))
 		return -1;
 	/* exclude debugging symbols */
 	else if (stype == 'N')
