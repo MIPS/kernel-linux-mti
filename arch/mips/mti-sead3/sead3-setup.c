@@ -36,9 +36,9 @@ const char *get_system_type(void)
 }
 
 #if defined(CONFIG_MIPS_MT_SMTC)
-const char display_string[] = "       SMTC LINUX ON SEAD3       ";
+const char display_string[] = "               SMTC LINUX ON SEAD3               ";
 #else
-const char display_string[] = "        LINUX ON SEAD3       ";
+const char display_string[] = "               LINUX ON SEAD3               ";
 #endif /* CONFIG_MIPS_MT_SMTC */
 
 void __init plat_mem_setup(void)

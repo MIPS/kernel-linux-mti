@@ -27,12 +27,47 @@ extern const char display_string[];
 static unsigned int display_count;
 static unsigned int max_display_count;
 
+#define DISPLAY_LCDINSTRUCTION         (0*2)
+#define DISPLAY_LCDDATA                (1*2)
+#define DISPLAY_CPLDSTATUS             (2*2)
+#define DISPLAY_CPLDDATA               (3*2)
+#define LCD_SETDDRAM                   0x80
+#define LCD_IR_BF                      0x80
+
+static void lcd_wait(unsigned int __iomem *display)
+{
+	/* wait for CPLD state machine to become idle */
+	do {
+	} while (__raw_readl(display + DISPLAY_CPLDSTATUS) & 1);
+
+	do {
+		__raw_readl(display + DISPLAY_LCDINSTRUCTION);
+
+		/* wait for CPLD state machine to become idle */
+		do {
+		} while (__raw_readl(display + DISPLAY_CPLDSTATUS) & 1);
+	} while (__raw_readl(display + DISPLAY_CPLDDATA) & LCD_IR_BF);
+}
+
 void mips_display_message(const char *str)
 {
 	static unsigned int __iomem *display;  /* static => auto initialized to NULL */
+	int i;
+	char ch;
 
 	if (unlikely(display == NULL))
-		display = ioremap(ASCII_DISPLAY_POS_BASE, 16*sizeof(int));
+		display = ioremap_nocache(LCD_DISPLAY_POS_BASE, 4*2*sizeof(int));
+
+	for (i = 0; i < 16; i++) {
+		if (*str)
+			ch = *str++;
+		else
+			ch = ' ';
+		lcd_wait(display);
+		__raw_writel(LCD_SETDDRAM | i, display + DISPLAY_LCDINSTRUCTION);
+		lcd_wait(display);
+		__raw_writel(ch, display + DISPLAY_LCDDATA);
+	}
 }
 
 static void scroll_display_message(unsigned long data);
@@ -50,6 +85,6 @@ static void scroll_display_message(unsigned long data)
 void mips_scroll_message(void)
 {
 	del_timer_sync(&mips_scroll_timer);
-	max_display_count = strlen(display_string) + 1 - 8;
+	max_display_count = strlen(display_string) + 1 - 16;
 	mod_timer(&mips_scroll_timer, jiffies + 1);
 }
