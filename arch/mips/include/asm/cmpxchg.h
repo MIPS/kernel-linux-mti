@@ -46,6 +46,7 @@
 		"	" st "	$1, %1				\n"	\
 		"	beqz	$1, 3f				\n"	\
 		"2:						\n"	\
+		"	.insn					\n"	\
 		"	.subsection 2				\n"	\
 		"3:	b	1b				\n"	\
 		"	.previous				\n"	\
