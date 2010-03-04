@@ -89,6 +89,7 @@ void (*board_nmi_handler_setup)(void);
 void (*board_ejtag_handler_setup)(void);
 void (*board_bind_eic_interrupt)(int irq, int regset);
 
+static void mt_ase_fp_affinity(void);
 
 static void show_raw_backtrace(unsigned long reg29)
 {
@@ -753,9 +754,28 @@ static void do_trap_or_bp(struct pt_regs *regs, unsigned int code,
 asmlinkage void do_bp(struct pt_regs *regs)
 {
 	unsigned int opcode, bcode;
+	u32 epc;
+	u16 instr[2];
 
-	if (__get_user(opcode, (unsigned int __user *) exception_epc(regs)))
-		goto out_sigsegv;
+	if (regs->cp0_epc & 1) {
+		/* calc exception pc */
+		epc = (u32)regs->cp0_epc;
+		if (delay_slot(regs)) {
+			if (get_user(instr[0], (u16 __user *)(epc & ~0x1)))
+				goto out_sigsegv;
+			if (mm_is16bit(instr[0]))
+				epc += 2;
+			else
+				epc += 4;
+		}
+		if ((get_user(instr[0], (u16 __user *)(epc & ~0x1))) ||
+			(get_user(instr[1], (u16 __user *)((epc+2) & ~0x1))))
+			goto out_sigsegv;
+		opcode = (instr[0] << 16) | instr[1];
+	} else {
+		if (__get_user(opcode, (unsigned int __user *) exception_epc(regs)))
+			goto out_sigsegv;
+	}
 
 	/*
 	 * There is the ancient bug in the MIPS assemblers that the break
@@ -802,6 +822,27 @@ asmlinkage void do_ri(struct pt_regs *regs)
 	if (notify_die(DIE_RI, "RI Fault", regs, SIGSEGV, 0, 0)
 	    == NOTIFY_STOP)
 		return;
+
+	/* NOTE: micro_mips mode is allowed while in the kernel */
+	if (likely(regs->cp0_epc & 0x1)) {
+		if (used_math())        /* Using the FPU again.  */
+			own_fpu(1);
+		else {                  /* First time FPU user.  */
+			init_fpu();
+			set_used_math();
+		}
+
+		if (!raw_cpu_has_fpu) {
+			int sig;
+			sig = fpu_emulator_cop1Handler(regs, &current->thread.fpu, 0);
+			if (sig)
+				force_sig(sig, current);
+			else
+				mt_ase_fp_affinity();
+		}
+
+		return;
+	}
 
 	die_if_kernel("Reserved instruction in kernel code", regs);
 

@@ -41,6 +41,9 @@ extern int mips_dsemul(struct pt_regs *regs, mips_instruction ir,
 	unsigned long cpc);
 extern int do_dsemulret(struct pt_regs *xcp);
 
+/* function to check if an micro_mips instr is 16-bits */
+extern int mm_is16bit(u16);
+
 /*
  * Instruction inserted following the badinst to further tag the sequence
  */
@@ -50,5 +53,6 @@ extern int do_dsemulret(struct pt_regs *xcp);
  * Break instruction with special math emu break code set
  */
 #define BREAK_MATH (0x0000000d | (BRK_MEMU << 16))
+#define MM_BREAK_MATH (0x00000007 | (BRK_MEMU << 16))
 
 #endif /* _ASM_FPU_EMULATOR_H */

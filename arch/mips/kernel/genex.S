@@ -503,6 +503,8 @@ NESTED(nmi_handler, PT_SIZE, sp)
 	.set	noreorder
 	/* 0x7c03e83b: rdhwr v1,$29 */
 	MFC0	k1, CP0_EPC
+	andi    k0, k1, 1
+	bnez    k0, handle_ri
 	lui	k0, 0x7c03
 	lw	k1, (k1)
 	ori	k0, 0xe83b
