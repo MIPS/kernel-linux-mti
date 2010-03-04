@@ -36,7 +36,7 @@ static DEFINE_SPINLOCK(pic32_bus_lock);
 
 /* FIXME: io_remap these */
 static void __iomem *bus_xfer   = (void __iomem *)0xbf000600;
-static void __iomem *bus_status = (void __iomem *)0xbe800060;
+static void __iomem *bus_status = (void __iomem *)0xbf000060;
 
 static inline unsigned int ioready(void)
 {

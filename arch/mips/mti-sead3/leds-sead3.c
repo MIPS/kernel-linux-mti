@@ -25,14 +25,14 @@ static void sead3_pled_set(struct led_classdev *led_cdev,
 		enum led_brightness value)
 {
 	pr_debug("sead3_pled_set\n");
-	*(unsigned int *)0xBF000210 = value;	/* FIXME */
+	writel(value, (void __iomem *)0xBF000210);	/* FIXME */
 }
 
 static void sead3_fled_set(struct led_classdev *led_cdev,
 		enum led_brightness value)
 {
 	pr_debug("sead3_fled_set\n");
-	*(unsigned int *)0xBF000200 = value;	/* FIXME */
+	writel(value, (void __iomem *)0xBF000218);	/* FIXME */
 }
 
 static struct led_classdev sead3_pled = {
@@ -75,12 +75,7 @@ static int sead3_led_probe(struct platform_device *pdev)
 
 	ret = led_classdev_register(&pdev->dev, &sead3_fled);
 	if (ret < 0)
-		goto err1;
-
-	return ret;
-
-err1:
-	led_classdev_unregister(&sead3_pled);
+		led_classdev_unregister(&sead3_pled);
 
 	return ret;
 }

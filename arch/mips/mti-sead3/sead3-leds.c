@@ -43,7 +43,7 @@ static struct led_platform_data led_data = {
 static struct resource pled_resources[] = {
 	{
 		.start			= 0x1F000210,
-		.end			= 0x1F000213,
+		.end			= 0x1F000217,
 		.flags			= IORESOURCE_MEM
 	}
 };
@@ -61,8 +61,8 @@ static struct platform_device pled_device = {
 
 static struct resource fled_resources[] = {
 	{
-		.start			= 0x1F000210,
-		.end			= 0x1F000213,
+		.start			= 0x1F000218,
+		.end			= 0x1F00021f,
 		.flags			= IORESOURCE_MEM
 	}
 };
@@ -80,7 +80,7 @@ static struct platform_device fled_device = {
 
 static int __init led_init(void)
 {
-	return platform_device_register(&pled_device);
+	platform_device_register(&pled_device);
 	return platform_device_register(&fled_device);
 }
 

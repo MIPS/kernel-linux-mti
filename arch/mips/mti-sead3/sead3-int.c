@@ -35,6 +35,15 @@
 #include <asm/irq_cpu.h>
 #include <asm/irq_regs.h>
 #include <asm/mips-boards/generic.h>
+#include <asm/gic.h>
+
+#define SEAD_CONFIG_GIC_PRESENT_SHF   (1)
+#define SEAD_CONFIG_GIC_PRESENT_MSK   (1 << SEAD_CONFIG_GIC_PRESENT_SHF)
+#define SEAD_CONFIG_BASE              (0x1B100110)
+#define SEAD_CONFIG_SIZE              (4)
+
+int gic_present;    /* global var => auto initialized to 0 */
+static unsigned long sead3_config_reg;
 
 /*
  * Version of ffs that only looks at bits 8..15
@@ -86,5 +95,11 @@ void __init arch_init_irq(void)
 {
 	if (!cpu_has_veic)
 		mips_cpu_irq_init();
+
+	sead3_config_reg = (unsigned long)ioremap_nocache(SEAD_CONFIG_BASE, SEAD_CONFIG_SIZE);
+	gic_present = (REG32(sead3_config_reg) & SEAD_CONFIG_GIC_PRESENT_MSK) >>
+			SEAD_CONFIG_GIC_PRESENT_SHF;
+	printk("GIC: %spresent\n", (gic_present) ? "" : "not ");
+	printk("EIC: %s\n", (current_cpu_data.options & MIPS_CPU_VEIC) ? "on" : "off");
 }
 

@@ -24,8 +24,8 @@ static struct smsc911x_platform_config net_data = {
 
 struct resource net_resources[] = {
 	{
-		.start                  = 0x1e400000,
-		.end                    = 0x1e7fffff,
+		.start                  = 0x1f010000,
+		.end                    = 0x1f01ffff,
 		.flags			= IORESOURCE_MEM
 	},
 	{
