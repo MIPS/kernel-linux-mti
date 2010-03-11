@@ -24,8 +24,8 @@
 }
 
 static struct plat_serial8250_port uart8250_data[] = {
-	UART(0x1f000800, MIPS_CPU_IRQ_BASE + 4),
-	UART(0x1f000900, MIPS_CPU_IRQ_BASE + 4),
+	UART(0x1f000900, MIPS_CPU_IRQ_BASE + 4),   /* ttyS0 = USB   */
+	UART(0x1f000800, MIPS_CPU_IRQ_BASE + 4),   /* ttyS1 = RS232 */
 	{ },
 };
 
