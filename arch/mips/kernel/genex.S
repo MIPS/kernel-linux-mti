@@ -131,10 +131,11 @@ handle_vcei:
 	__FINIT
 
 	.align	5	/* 32 byte rollback region */
+	.set	push
+	.set	nomicromips
 LEAF(r4k_wait)
 	.set	push
 	.set	noreorder
-	.set	nomicromips
 	/* start of rollback region */
 	LONG_L	t0, TI_FLAGS($28)
 	nop
@@ -150,7 +151,8 @@ LEAF(r4k_wait)
 	jr	ra
 	.set	pop
 	END(r4k_wait)
-
+	.set pop
+	
 	.macro	BUILD_ROLLBACK_PROLOGUE handler
 	FEXPORT(rollback_\handler)
 	.set	push
