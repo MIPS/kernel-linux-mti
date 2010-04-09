@@ -823,27 +823,6 @@ asmlinkage void do_ri(struct pt_regs *regs)
 	    == NOTIFY_STOP)
 		return;
 
-	/* NOTE: micro_mips mode is allowed while in the kernel */
-	if (likely(regs->cp0_epc & 0x1)) {
-		if (used_math())        /* Using the FPU again.  */
-			own_fpu(1);
-		else {                  /* First time FPU user.  */
-			init_fpu();
-			set_used_math();
-		}
-
-		if (!raw_cpu_has_fpu) {
-			int sig;
-			sig = fpu_emulator_cop1Handler(regs, &current->thread.fpu, 0);
-			if (sig)
-				force_sig(sig, current);
-			else
-				mt_ase_fp_affinity();
-		}
-
-		return;
-	}
-
 	die_if_kernel("Reserved instruction in kernel code", regs);
 
 	if (unlikely(compute_return_epc(regs) < 0))
