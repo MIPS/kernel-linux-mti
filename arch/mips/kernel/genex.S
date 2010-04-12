@@ -149,6 +149,7 @@ LEAF(r4k_wait)
 	/* end of rollback region (the region size must be power of two) */
 1:
 	jr	ra
+	nop
 	.set	pop
 	END(r4k_wait)
 	.set pop
