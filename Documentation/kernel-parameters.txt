@@ -58,6 +58,7 @@ parameter is applicable:
 	ISAPNP	ISA PnP code is enabled.
 	ISDN	Appropriate ISDN support is enabled.
 	JOY	Appropriate joystick support is enabled.
+	KGDB	Kernel debugger support is enabled.
 	KVM	Kernel Virtual Machine support is enabled.
 	LIBATA  Libata driver is enabled
 	LP	Printer support is enabled.
@@ -712,6 +713,12 @@ and is between 256 and 4096 characters. It is defined in the file
 			The VGA output is eventually overwritten by the real
 			console.
 
+	ekgdboc=	[X86,KGDB] Allow early kernel console debugging
+			ekgdboc=kbd
+
+			This is desgined to be used in conjunction with
+			the boot argument: earlyprintk=vga
+
 	eata=		[HW,SCSI]
 
 	edd=		[EDD]
@@ -1120,10 +1127,26 @@ and is between 256 and 4096 characters. It is defined in the file
 			use the HighMem zone if it exists, and the Normal
 			zone if it does not.
 
-	kgdboc=		[HW] kgdb over consoles.
-			Requires a tty driver that supports console polling.
-			(only serial supported for now)
-			Format: <serial_device>[,baud]
+	kgdbdbgp=	[KGDB,HW] kgdb over EHCI usb debug port.
+			Format: <Controller#>[,poll interval]
+			The controller # is the number of the ehci usb debug
+			port as it is probed via PCI.  The poll interval is
+			optional and is the number seconds in between
+			each poll cycle to the debug port in case you need
+			the functionality for interrupting the kernel with
+			gdb or control-c on the dbgp connection.  When
+			not using this parameter you use sysrq-g to break into
+			the kernel debugger.
+
+	kgdboc=		[KGDB,HW] kgdb over consoles.
+			Requires a tty driver that supports console polling,
+			or a supported polling keyboard driver (non-usb).
+			Serial only format: <serial_device>[,baud]
+			keyboard only format: kbd
+			keyboard and serial format: kbd,<serial_device>[,baud]
+
+	kgdbwait	[KGDB] Stop kernel execution and enter the
+			kernel debugger at the earliest opportunity.
 
 	kmac=		[MIPS] korina ethernet MAC address.
 			Configure the RouterBoard 532 series on-chip

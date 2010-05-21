@@ -131,19 +131,12 @@ L:	netdev@vger.kernel.org
 S:	Maintained
 F:	drivers/net/typhoon*
 
-3W-9XXX SATA-RAID CONTROLLER DRIVER
-M:	Adam Radford <linuxraid@amcc.com>
+3WARE SAS/SATA-RAID SCSI DRIVERS (3W-XXXX, 3W-9XXX, 3W-SAS)
+M:	Adam Radford <linuxraid@lsi.com>
 L:	linux-scsi@vger.kernel.org
-W:	http://www.amcc.com
+W:	http://www.lsi.com
 S:	Supported
-F:	drivers/scsi/3w-9xxx*
-
-3W-XXXX ATA-RAID CONTROLLER DRIVER
-M:	Adam Radford <linuxraid@amcc.com>
-L:	linux-scsi@vger.kernel.org
-W:	http://www.amcc.com
-S:	Supported
-F:	drivers/scsi/3w-xxxx*
+F:	drivers/scsi/3w-*
 
 53C700 AND 53C700-66 SCSI DRIVER
 M:	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
@@ -3326,15 +3319,17 @@ F:	include/linux/key-type.h
 F:	include/keys/
 F:	security/keys/
 
-KGDB
+KGDB / KDB /debug_core
 M:	Jason Wessel <jason.wessel@windriver.com>
+W:	http://kgdb.wiki.kernel.org/
 L:	kgdb-bugreport@lists.sourceforge.net
 S:	Maintained
 F:	Documentation/DocBook/kgdb.tmpl
 F:	drivers/misc/kgdbts.c
 F:	drivers/serial/kgdboc.c
+F:	include/linux/kdb.h
 F:	include/linux/kgdb.h
-F:	kernel/kgdb.c
+F:	kernel/debug/
 
 KMEMCHECK
 M:	Vegard Nossum <vegardno@ifi.uio.no>
@@ -4621,6 +4616,14 @@ S:	Supported
 F:	Documentation/scsi/LICENSE.qla2xxx
 F:	drivers/scsi/qla2xxx/
 
+QLOGIC QLA4XXX iSCSI DRIVER
+M:	Ravi Anand <ravi.anand@qlogic.com>
+M:	Vikas Chaudhary <vikas.chaudhary@qlogic.com>
+M:	iscsi-driver@qlogic.com
+L:	linux-scsi@vger.kernel.org
+S:	Supported
+F:	drivers/scsi/qla4xxx/
+
 QLOGIC QLA3XXX NETWORK DRIVER
 M:	Ron Mercer <ron.mercer@qlogic.com>
 M:	linux-driver@qlogic.com
@@ -4760,6 +4763,12 @@ L:	linux-wireless@vger.kernel.org
 S:	Maintained
 F:	Documentation/rfkill.txt
 F:	net/rfkill/
+
+RICOH SMARTMEDIA/XD DRIVER
+M:	Maxim Levitsky <maximlevitsky@gmail.com>
+S:	Maintained
+F:	drivers/mtd/nand/r822.c
+F:	drivers/mtd/nand/r822.h
 
 RISCOM8 DRIVER
 S:	Orphan
