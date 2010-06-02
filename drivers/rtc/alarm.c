@@ -13,7 +13,9 @@
  *
  */
 
+#ifdef __arm__
 #include <asm/mach/time.h>
+#endif
 #include <linux/android_alarm.h>
 #include <linux/device.h>
 #include <linux/miscdevice.h>
@@ -49,6 +51,9 @@
 /* support old usespace code */
 #define ANDROID_ALARM_SET_OLD               _IOW('a', 2, time_t) /* set alarm */
 #define ANDROID_ALARM_SET_AND_WAIT_OLD      _IOW('a', 3, time_t)
+
+
+extern void save_time_delta(struct timespec *delta, struct timespec *rtc);
 
 static struct rtc_device *alarm_rtc_dev;
 static int alarm_opened;

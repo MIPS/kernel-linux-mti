@@ -157,3 +157,37 @@ void __init time_init(void)
 	if (!mips_clockevent_init() || !cpu_has_mfc0_count_bug())
 		init_mips_clocksource();
 }
+
+/**
+ * save_time_delta - Save the offset between system time and RTC time
+ * @delta: pointer to timespec to store delta
+ * @rtc: pointer to timespec for current RTC time
+ *
+ * Return a delta between the system time and the RTC time, such
+ * that system time can be restored later with restore_time_delta()
+ */
+void save_time_delta(struct timespec *delta, struct timespec *rtc)
+{
+	set_normalized_timespec(delta,
+				xtime.tv_sec - rtc->tv_sec,
+				xtime.tv_nsec - rtc->tv_nsec);
+}
+EXPORT_SYMBOL(save_time_delta);
+
+/**
+ * restore_time_delta - Restore the current system time
+ * @delta: delta returned by save_time_delta()
+ * @rtc: pointer to timespec for current RTC time
+ */
+void restore_time_delta(struct timespec *delta, struct timespec *rtc)
+{
+	struct timespec ts;
+
+	set_normalized_timespec(&ts,
+				delta->tv_sec + rtc->tv_sec,
+				delta->tv_nsec + rtc->tv_nsec);
+
+	do_settimeofday(&ts);
+}
+EXPORT_SYMBOL(restore_time_delta);
+
