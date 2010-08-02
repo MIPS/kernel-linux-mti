@@ -24,6 +24,7 @@
  */
 #include <linux/device.h>
 #include <linux/dma-mapping.h>
+#include <linux/i2c-pnx.h>
 #include <linux/platform_device.h>
 #include <linux/kernel.h>
 #include <linux/init.h>
@@ -32,11 +33,6 @@
 #include <linux/serial_pnx8xxx.h>
 #include <linux/mtd/nand.h>
 #include <linux/mtd/partitions.h>
-
-#ifdef CONFIG_I2C_PNX0105
-/* Until i2c driver available in kernel.*/
-#include <linux/i2c-pnx0105.h>
-#endif
 
 #include <irq.h>
 #include <irq-mapping.h>
@@ -134,7 +130,6 @@ static struct platform_device pnx833x_usb_ehci_device = {
 	.resource	= pnx833x_usb_ehci_resources,
 };
 
-#ifdef CONFIG_I2C_PNX0105
 static struct resource pnx833x_i2c0_resources[] = {
 	{
 		.start		= PNX833X_I2C0_PORTS_START,
@@ -188,7 +183,7 @@ static struct platform_device pnx833x_i2c0_device = {
 };
 
 static struct platform_device pnx833x_i2c1_device = {
-	.name		= "i2c-pnx0105",
+	.name		= "pnx-i2c",
 	.id		= 1,
 	.dev = {
 		.platform_data = &pnx833x_i2c_dev[1],
@@ -196,7 +191,6 @@ static struct platform_device pnx833x_i2c1_device = {
 	.num_resources  = ARRAY_SIZE(pnx833x_i2c1_resources),
 	.resource	= pnx833x_i2c1_resources,
 };
-#endif
 
 static u64 ethernet_dmamask = DMA_BIT_MASK(32);
 
@@ -297,10 +291,8 @@ static struct platform_device pnx833x_flash_nand = {
 static struct platform_device *pnx833x_platform_devices[] __initdata = {
 	&pnx833x_uart_device,
 	&pnx833x_usb_ehci_device,
-#ifdef CONFIG_I2C_PNX0105
 	&pnx833x_i2c0_device,
 	&pnx833x_i2c1_device,
-#endif
 	&pnx833x_ethernet_device,
 	&pnx833x_sata_device,
 	&pnx833x_flash_nand,
