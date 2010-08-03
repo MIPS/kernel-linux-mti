@@ -761,24 +761,20 @@ err:
 static int __devinit jz4740_mmc_request_cd_irq(struct platform_device *pdev,
 	struct jz4740_mmc_host *host)
 {
-	int ret;
 	struct jz4740_mmc_platform_data *pdata = pdev->dev.platform_data;
 
-	if (gpio_is_valid(pdata->gpio_card_detect))
+	if (!gpio_is_valid(pdata->gpio_card_detect))
 		return 0;
 
 	host->card_detect_irq = gpio_to_irq(pdata->gpio_card_detect);
-
 	if (host->card_detect_irq < 0) {
 		dev_warn(&pdev->dev, "Failed to get card detect irq\n");
 		return 0;
 	}
+
 	return request_irq(host->card_detect_irq, jz4740_mmc_card_detect_irq,
 			IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
 			"MMC card detect", host);
-
-
-	return ret;
 }
 
 static void jz4740_mmc_free_gpios(struct platform_device *pdev)
