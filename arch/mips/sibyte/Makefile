@@ -1,14 +1,14 @@
 #
 # Sibyte SB1250 / BCM1480 family of SOCs
 #
-core-$(CONFIG_SIBYTE_BCM112X)	+= sb1250/
-core-$(CONFIG_SIBYTE_BCM112X)	+= common/
-core-$(CONFIG_SIBYTE_SB1250)	+= sb1250/
-core-$(CONFIG_SIBYTE_SB1250)	+= common/
-core-$(CONFIG_SIBYTE_BCM1x55)	+= bcm1480/
-core-$(CONFIG_SIBYTE_BCM1x55)	+= common/
-core-$(CONFIG_SIBYTE_BCM1x80)	+= bcm1480/
-core-$(CONFIG_SIBYTE_BCM1x80)	+= common/
+obj-$(CONFIG_SIBYTE_BCM112X)	+= sb1250/
+obj-$(CONFIG_SIBYTE_BCM112X)	+= common/
+obj-$(CONFIG_SIBYTE_SB1250)	+= sb1250/
+obj-$(CONFIG_SIBYTE_SB1250)	+= common/
+obj-$(CONFIG_SIBYTE_BCM1x55)	+= bcm1480/
+obj-$(CONFIG_SIBYTE_BCM1x55)	+= common/
+obj-$(CONFIG_SIBYTE_BCM1x80)	+= bcm1480/
+obj-$(CONFIG_SIBYTE_BCM1x80)	+= common/
 
 #
 # Sibyte BCM91120x (Carmel) board
@@ -18,10 +18,10 @@ core-$(CONFIG_SIBYTE_BCM1x80)	+= common/
 # Sibyte SWARM board
 # Sibyte BCM91x80 (BigSur) board
 #
-core-$(CONFIG_SIBYTE_CARMEL)	+= swarm/
-core-$(CONFIG_SIBYTE_CRHINE)	+= swarm/
-core-$(CONFIG_SIBYTE_CRHONE)	+= swarm/
-core-$(CONFIG_SIBYTE_RHONE)	+= swarm/
-core-$(CONFIG_SIBYTE_SENTOSA)	+= swarm/
-core-$(CONFIG_SIBYTE_SWARM)	+= swarm/
-core-$(CONFIG_SIBYTE_BIGSUR)	+= swarm/
+obj-$(CONFIG_SIBYTE_CARMEL)	+= swarm/
+obj-$(CONFIG_SIBYTE_CRHINE)	+= swarm/
+obj-$(CONFIG_SIBYTE_CRHONE)	+= swarm/
+obj-$(CONFIG_SIBYTE_RHONE)	+= swarm/
+obj-$(CONFIG_SIBYTE_SENTOSA)	+= swarm/
+obj-$(CONFIG_SIBYTE_SWARM)	+= swarm/
+obj-$(CONFIG_SIBYTE_BIGSUR)	+= swarm/

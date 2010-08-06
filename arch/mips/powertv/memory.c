@@ -161,9 +161,10 @@ static __init void register_non_ram(void)
  */
 static phys_addr_t get_memsize(void)
 {
+	static char cmdline[COMMAND_LINE_SIZE] __initdata;
 	phys_addr_t memsize = 0;
 	char *memsize_str;
-	char cmdline[COMMAND_LINE_SIZE], *ptr;
+	char *ptr;
 
 	/* Check the command line first for a memsize directive */
 	strcpy(cmdline, arcs_cmdline);
