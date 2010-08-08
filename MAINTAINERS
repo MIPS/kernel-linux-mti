@@ -2237,6 +2237,7 @@ S:	Maintained
 F:	drivers/net/eth16i.c
 
 EXT2 FILE SYSTEM
+M:	Jan Kara <jack@suse.cz>
 L:	linux-ext4@vger.kernel.org
 S:	Maintained
 F:	Documentation/filesystems/ext2.txt
@@ -2244,8 +2245,9 @@ F:	fs/ext2/
 F:	include/linux/ext2*
 
 EXT3 FILE SYSTEM
+M:	Jan Kara <jack@suse.cz>
 M:	Andrew Morton <akpm@linux-foundation.org>
-M:	Andreas Dilger <adilger@sun.com>
+M:	Andreas Dilger <adilger.kernel@dilger.ca>
 L:	linux-ext4@vger.kernel.org
 S:	Maintained
 F:	Documentation/filesystems/ext3.txt
@@ -2254,7 +2256,7 @@ F:	include/linux/ext3*
 
 EXT4 FILE SYSTEM
 M:	"Theodore Ts'o" <tytso@mit.edu>
-M:	Andreas Dilger <adilger@sun.com>
+M:	Andreas Dilger <adilger.kernel@dilger.ca>
 L:	linux-ext4@vger.kernel.org
 W:	http://ext4.wiki.kernel.org
 Q:	http://patchwork.ozlabs.org/project/linux-ext4/list/
@@ -2322,6 +2324,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/ieee1394/linux1394-2.6.git
 S:	Maintained
 F:	drivers/firewire/
 F:	include/linux/firewire*.h
+F:	tools/firewire/
 
 FIRMWARE LOADER (request_firmware)
 S:	Orphan
@@ -5562,6 +5565,15 @@ W:	http://tcp-lp-mod.sourceforge.net/
 S:	Maintained
 F:	net/ipv4/tcp_lp.c
 
+TEGRA SUPPORT
+M:	Colin Cross <ccross@android.com>
+M:	Erik Gilling <konkers@android.com>
+M:	Olof Johansson <olof@lixom.net>
+L:	linux-tegra@vger.kernel.org
+T:	git git://android.git.kernel.org/kernel/tegra.git
+S:	Supported
+F:	arch/arm/mach-tegra
+
 TEHUTI ETHERNET DRIVER
 M:	Alexander Indenbaum <baum@tehutinetworks.net>
 M:	Andy Gospodarek <andy@greyhouse.net>
@@ -5613,6 +5625,12 @@ S:	Maintained
 F:	include/linux/tipc*.h
 F:	include/net/tipc/
 F:	net/tipc/
+
+TILE ARCHITECTURE
+M:	Chris Metcalf <cmetcalf@tilera.com>
+W:	http://www.tilera.com/scm/
+S:	Supported
+F:	arch/tile/
 
 TLAN NETWORK DRIVER
 M:	Samuel Chessman <chessman@tux.org>
@@ -6175,9 +6193,12 @@ F:	drivers/mmc/host/via-sdmmc.c
 
 VIA UNICHROME(PRO)/CHROME9 FRAMEBUFFER DRIVER
 M:	Joseph Chan <JosephChan@via.com.tw>
-M:	Scott Fang <ScottFang@viatech.com.cn>
+M:	Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
 L:	linux-fbdev@vger.kernel.org
 S:	Maintained
+F:	include/linux/via-core.h
+F:	include/linux/via-gpio.h
+F:	include/linux/via_i2c.h
 F:	drivers/video/via/
 
 VIA VELOCITY NETWORK DRIVER
