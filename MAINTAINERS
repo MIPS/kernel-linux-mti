@@ -1135,7 +1135,7 @@ ATLX ETHERNET DRIVERS
 M:	Jay Cliburn <jcliburn@gmail.com>
 M:	Chris Snook <chris.snook@gmail.com>
 M:	Jie Yang <jie.yang@atheros.com>
-L:	atl1-devel@lists.sourceforge.net
+L:	netdev@vger.kernel.org
 W:	http://sourceforge.net/projects/atl1
 W:	http://atl1.sourceforge.net
 S:	Maintained
@@ -2657,9 +2657,12 @@ S:	Maintained
 F:	drivers/media/video/gspca/
 
 HARDWARE MONITORING
+M:	Jean Delvare <khali@linux-fr.org>
+M:	Guenter Roeck <guenter.roeck@ericsson.com>
 L:	lm-sensors@lm-sensors.org
 W:	http://www.lm-sensors.org/
-S:	Orphan
+T:	quilt kernel.org/pub/linux/kernel/people/jdelvare/linux-2.6/jdelvare-hwmon/
+S:	Maintained
 F:	Documentation/hwmon/
 F:	drivers/hwmon/
 F:	include/linux/hwmon*.h
