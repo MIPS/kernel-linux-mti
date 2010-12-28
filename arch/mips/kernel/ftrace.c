@@ -37,6 +37,7 @@ static inline int in_module(unsigned long ip)
 
 #define JAL 0x0c000000		/* jump & link: ip --> ra, jump to target */
 #define ADDR_MASK 0x03ffffff	/*  op_code|addr : 31...26|25 ....0 */
+#define JUMP_RANGE_MASK ((1UL << 28) - 1)
 
 #define INSN_B_1F_4 0x10000004	/* b 1f; offset = 4 */
 #define INSN_B_1F_5 0x10000005	/* b 1f; offset = 5 */
@@ -60,12 +61,12 @@ static inline void ftrace_dyn_arch_init_insns(void)
 
 	/* jal (ftrace_caller + 8), jump over the first two instruction */
 	buf = (u32 *)&insn_jal_ftrace_caller;
-	uasm_i_jal(&buf, (FTRACE_ADDR + 8));
+	uasm_i_jal(&buf, (FTRACE_ADDR + 8) & JUMP_RANGE_MASK);
 
 #ifdef CONFIG_FUNCTION_GRAPH_TRACER
 	/* j ftrace_graph_caller */
 	buf = (u32 *)&insn_j_ftrace_graph_caller;
-	uasm_i_j(&buf, (unsigned long)ftrace_graph_caller);
+	uasm_i_j(&buf, (unsigned long)ftrace_graph_caller & JUMP_RANGE_MASK);
 #endif
 }
 
