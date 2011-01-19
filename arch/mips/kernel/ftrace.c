@@ -25,8 +25,6 @@
 #define ADDR_MASK 0x03ffffff	/*  op_code|addr : 31...26|25 ....0 */
 #define JUMP_RANGE_MASK ((1UL << 28) - 1)
 
-#define INSN_B_1F_4 0x10000004	/* b 1f; offset = 4 */
-#define INSN_B_1F_5 0x10000005	/* b 1f; offset = 5 */
 #define INSN_NOP 0x00000000	/* nop */
 #define INSN_JAL(addr)	\
 	((unsigned int)(JAL | (((addr) >> 2) & ADDR_MASK)))
@@ -85,6 +83,42 @@ static int ftrace_modify_code(unsigned long ip, unsigned int new_code)
 	return 0;
 }
 
+/*
+ * The details about the calling site of mcount on MIPS
+ *
+ * 1. For kernel:
+ *
+ * move at, ra
+ * jal _mcount		--> nop
+ *
+ * 2. For modules:
+ *
+ * 2.1 For KBUILD_MCOUNT_RA_ADDRESS and CONFIG_32BIT
+ *
+ * lui v1, hi_16bit_of_mcount        --> b 1f (0x10000005)
+ * addiu v1, v1, low_16bit_of_mcount
+ * move at, ra
+ * move $12, ra_address
+ * jalr v1
+ *  sub sp, sp, 8
+ *                                  1: offset = 5 instructions
+ * 2.2 For the Other situations
+ *
+ * lui v1, hi_16bit_of_mcount        --> b 1f (0x10000004)
+ * addiu v1, v1, low_16bit_of_mcount
+ * move at, ra
+ * jalr v1
+ *  nop | move $12, ra_address | sub sp, sp, 8
+ *                                  1: offset = 4 instructions
+ */
+
+#if defined(KBUILD_MCOUNT_RA_ADDRESS) && defined(CONFIG_32BIT)
+#define MCOUNT_OFFSET_INSNS 5
+#else
+#define MCOUNT_OFFSET_INSNS 4
+#endif
+#define INSN_B_1F (0x10000000 | MCOUNT_OFFSET_INSNS)
+
 int ftrace_make_nop(struct module *mod,
 		    struct dyn_ftrace *rec, unsigned long addr)
 {
@@ -95,36 +129,8 @@ int ftrace_make_nop(struct module *mod,
 	 * If ip is in kernel space, no long call, otherwise, long call is
 	 * needed.
 	 */
-	if (in_kernel_space(ip)) {
-		/*
-		 * move at, ra
-		 * jal _mcount		--> nop
-		 */
-		new = INSN_NOP;
-	} else {
-#if defined(KBUILD_MCOUNT_RA_ADDRESS) && defined(CONFIG_32BIT)
-		/*
-		 * lui v1, hi_16bit_of_mcount        --> b 1f (0x10000005)
-		 * addiu v1, v1, low_16bit_of_mcount
-		 * move at, ra
-		 * move $12, ra_address
-		 * jalr v1
-		 *  sub sp, sp, 8
-		 *                                  1: offset = 5 instructions
-		 */
-		new = INSN_B_1F_5;
-#else
-		/*
-		 * lui v1, hi_16bit_of_mcount        --> b 1f (0x10000004)
-		 * addiu v1, v1, low_16bit_of_mcount
-		 * move at, ra
-		 * jalr v1
-		 *  nop | move $12, ra_address | sub sp, sp, 8
-		 *                                  1: offset = 4 instructions
-		 */
-		new = INSN_B_1F_4;
-#endif
-	}
+	new = in_kernel_space(ip) ? INSN_NOP : INSN_B_1F;
+
 	return ftrace_modify_code(ip, new);
 }
 
