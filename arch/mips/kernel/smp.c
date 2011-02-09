@@ -208,6 +208,11 @@ int __cpuinit __cpu_up(unsigned int cpu)
 
 		if (IS_ERR(idle))
 			panic(KERN_ERR "Fork failed for CPU %d", cpu);
+
+		if (idle->mm) {
+			mmput(idle->mm);
+			idle->mm = NULL;
+		}
 	} else {
 		idle = cpu_idle_thread[cpu];
 		init_idle(idle, cpu);
