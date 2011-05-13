@@ -326,7 +326,7 @@ int __init ar7_gpio_init(void)
 	}
 
 	gpch->regs = ioremap_nocache(AR7_REGS_GPIO,
-					AR7_REGS_GPIO + 0x10);
+					AR7_REGS_GPIO + size);
 
 	if (!gpch->regs) {
 		printk(KERN_ERR "%s: failed to ioremap regs\n",
