@@ -429,4 +429,5 @@ sys_call_table:
 	PTR	sys_clock_adjtime		/* 5300 */
 	PTR	sys_syncfs
 	PTR	sys_sendmmsg
+	PTR	sys_setns
 	.size	sys_call_table,.-sys_call_table

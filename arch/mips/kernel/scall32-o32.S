@@ -590,6 +590,7 @@ einval:	li	v0, -ENOSYS
 	sys	sys_clock_adjtime	2
 	sys	sys_syncfs		1
 	sys	sys_sendmmsg		4
+	sys	sys_setns		2
 	.endm
 
 	/* We pre-compute the number of _instruction_ bytes needed to

@@ -547,4 +547,5 @@ sys_call_table:
 	PTR	compat_sys_clock_adjtime
 	PTR	sys_syncfs
 	PTR	compat_sys_sendmmsg
+	PTR	sys_setns
 	.size	sys_call_table,.-sys_call_table
