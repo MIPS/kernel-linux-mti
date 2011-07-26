@@ -107,7 +107,7 @@ static resource_size_t pcibios_io_size(const struct pci_controller *hose)
 #ifdef CONFIG_PPC64
 	return hose->pci_io_size;
 #else
-	return hose->io_resource.end - hose->io_resource.start + 1;
+	return resource_size(&hose->io_resource);
 #endif
 }
 
@@ -1097,9 +1097,6 @@ void __devinit pcibios_setup_bus_devices(struct pci_bus *bus)
 		if (dev->is_added)
 			continue;
 
-		/* Setup OF node pointer in the device */
-		dev->dev.of_node = pci_device_to_OF_node(dev);
-
 		/* Fixup NUMA node as it may not be setup yet by the generic
 		 * code and is needed by the DMA init
 		 */
@@ -1685,6 +1682,13 @@ int early_find_capability(struct pci_controller *hose, int bus, int devfn,
 	return pci_bus_find_capability(fake_pci_bus(hose, bus), devfn, cap);
 }
 
+struct device_node *pcibios_get_phb_of_node(struct pci_bus *bus)
+{
+	struct pci_controller *hose = bus->sysdata;
+
+	return of_node_get(hose->dn);
+}
+
 /**
  * pci_scan_phb - Given a pci_controller, setup and scan the PCI bus
  * @hose: Pointer to the PCI host controller instance structure
@@ -1705,7 +1709,6 @@ void __devinit pcibios_scan_phb(struct pci_controller *hose)
 			hose->global_number);
 		return;
 	}
-	bus->dev.of_node = of_node_get(node);
 	bus->secondary = hose->first_busno;
 	hose->bus = bus;
 
@@ -1728,3 +1731,21 @@ void __devinit pcibios_scan_phb(struct pci_controller *hose)
 	if (mode == PCI_PROBE_NORMAL)
 		hose->last_busno = bus->subordinate = pci_scan_child_bus(bus);
 }
+
+static void fixup_hide_host_resource_fsl(struct pci_dev *dev)
+{
+	int i, class = dev->class >> 8;
+
+	if ((class == PCI_CLASS_PROCESSOR_POWERPC ||
+	     class == PCI_CLASS_BRIDGE_OTHER) &&
+		(dev->hdr_type == PCI_HEADER_TYPE_NORMAL) &&
+		(dev->bus->parent == NULL)) {
+		for (i = 0; i < DEVICE_COUNT_RESOURCE; i++) {
+			dev->resource[i].start = 0;
+			dev->resource[i].end = 0;
+			dev->resource[i].flags = 0;
+		}
+	}
+}
+DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_MOTOROLA, PCI_ANY_ID, fixup_hide_host_resource_fsl);
+DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_FREESCALE, PCI_ANY_ID, fixup_hide_host_resource_fsl);
