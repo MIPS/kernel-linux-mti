@@ -113,7 +113,8 @@ static inline int syscall_get_arch(void)
 {
 	int arch = EM_MIPS;
 #ifdef CONFIG_64BIT
-	arch |=  __AUDIT_ARCH_64BIT;
+	if (!test_tsk_thread_flag(current, TIF_32BIT_REGS))
+		arch |= __AUDIT_ARCH_64BIT;
 #endif
 #if defined(__LITTLE_ENDIAN)
 	arch |=  __AUDIT_ARCH_LE;
