@@ -31,6 +31,7 @@
 
 	.set	noreorder
 	.set	arch=r4000
+	.set    hardfloat
 
 LEAF(_save_fp_context)
 	cfc1	t1, fcr31
