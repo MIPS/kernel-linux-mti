@@ -1884,18 +1884,12 @@ static int cpsw_probe_dt(struct cpsw_platform_data *data,
 		mdio_node = of_find_node_by_phandle(be32_to_cpup(parp));
 		phyid = be32_to_cpup(parp+1);
 		mdio = of_find_device_by_node(mdio_node);
-
-		if (strncmp(mdio->name, "gpio", 4) == 0) {
-			/* GPIO bitbang MDIO driver attached */
-			struct mii_bus *bus = dev_get_drvdata(&mdio->dev);
-
-			snprintf(slave_data->phy_id, sizeof(slave_data->phy_id),
-				 PHY_ID_FMT, bus->id, phyid);
-		} else {
-			/* davinci MDIO driver attached */
-			snprintf(slave_data->phy_id, sizeof(slave_data->phy_id),
-				 PHY_ID_FMT, mdio->name, phyid);
+		if (!mdio) {
+			pr_err("Missing mdio platform device\n");
+			return -EINVAL;
 		}
+		snprintf(slave_data->phy_id, sizeof(slave_data->phy_id),
+			 PHY_ID_FMT, mdio->name, phyid);
 
 		mac_addr = of_get_mac_address(slave_node);
 		if (mac_addr)
@@ -2228,10 +2222,6 @@ static int cpsw_probe(struct platform_device *pdev)
 		ret = -ENODEV;
 		goto clean_ale_ret;
 	}
-
-	if (cpts_register(&pdev->dev, priv->cpts,
-			  data->cpts_clock_mult, data->cpts_clock_shift))
-		dev_err(priv->dev, "error registering cpts device\n");
 
 	cpsw_notice(priv, probe, "initialized device (regs %pa, irq %d)\n",
 		    &ss_res->start, ndev->irq);
